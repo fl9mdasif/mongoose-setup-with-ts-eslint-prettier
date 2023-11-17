@@ -40,11 +40,11 @@
 
         ```json
         "rules": {
-        "no-unused-vars": "error",
-        "no-unused-expressions": "error",
-        "prefer-const":"error",
-        "no-undef":"error",
-        "no-console": "warn"
+            "no-unused-vars": "error",
+            "no-unused-expressions": "error",
+            "prefer-const":"error",
+            "no-undef":"error",
+            "no-console": "warn"
         },
         "globals": {
             "process":"readonly"

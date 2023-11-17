@@ -39,13 +39,13 @@
 
 1. install this
 
-```npm
+```bash
 npm install eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin --save-dev
 ```
 
 2.
 
-```npm
+```bash
 npx eslint --init
 
 ```
@@ -86,7 +86,7 @@ then check the script `npm run lint & npm run lint-fix`
 
 1. install prettier
 
-```npm
+```bash
 npm install --save-dev prettier
 ```
 
@@ -117,7 +117,7 @@ npm install --save-dev prettier
 
 5. The best solution here is to use the eslint-config-prettier plugin to disable all ESLint rules that are irrelevant to code formatting, as Prettier is already good at it:
 
-```npm
+```bash
 npm install --save-dev eslint-config-prettier
 ```
 

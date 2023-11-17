@@ -4,6 +4,8 @@
   "description": "* Schema definition\r     * Model Creation\r     * Data Validation\r     * Querying\r     * MiddleWare Support\r     * Population (populate)",
   "main": "index.js",
   "scripts": {
+    "start-prod": "node ./dist/server.js",
+    "start-dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
     "lint": "eslint src --ignore-path .eslintignore --ext .ts",
     "lint-fix": "npx eslint src --fix",

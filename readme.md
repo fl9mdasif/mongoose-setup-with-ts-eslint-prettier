@@ -28,7 +28,7 @@
    - node dist/app.js
 
 8. setup app.ts & server.ts
-9. [es-lint & prettier setup blog](#es-lint-setup)
+9. [es-lint & prettier setup](#es-lint-setup)
 10. [prettier-setup](#prettier-setup)
 
 ### es lint setup
@@ -66,13 +66,64 @@ npx eslint --init
 }
 ```
 
-3. then add some script to `package.json`
+3. you can prevent linting by creating a `.eslintignore` file and adding the folders or files you want to ignore: this file
+
+```
+node_modules
+dist
+```
+
+4. then add some script to `package.json`
 
 ```json
 "lint": "eslint src --ignore-path .eslintignore --ext .ts",
 "lint-fix":"npx eslint src --fix"
 ```
 
+then check the script `npm run lint & npm run lint-fix`
+
 ### Prettier setup
 
-some rules in `eslint.json`
+1. install prettier
+
+```npm
+npm install --save-dev prettier
+```
+
+2.  you will need to create a file called `.prettierrc.json` in the project’s root directory, then paste some code to it
+    ```json
+    {
+      "semi": true,
+      "singleQuote": true
+    }
+    ```
+3.  add some script to `package.json`
+
+```json
+    "prettier": "prettier --ignore-path .gitignore --write \"./src/**/*.+(js|ts|json)\"",
+    "prettier-fix": "npx prettier --write src",
+```
+
+- then check the script `npm run prettier & npm run prettier-fix`
+
+4. add some script to vs code `setting.json`
+
+```json
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true
+}
+```
+
+5. The best solution here is to use the eslint-config-prettier plugin to disable all ESLint rules that are irrelevant to code formatting, as Prettier is already good at it:
+
+```npm
+npm install --save-dev eslint-config-prettier
+```
+
+6. With that installed, let’s go to the `.eslintrc` file, and add prettier at the end of your extends list to disable any other previous rules from other plugins:
+
+```json
+"extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
+
+```

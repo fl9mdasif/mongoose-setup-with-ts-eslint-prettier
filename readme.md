@@ -31,11 +31,13 @@
 
         * es lint setup
             * add some script to package.json
-                    ```
+
+            ```json
             "lint": "eslint src --ignore-path .eslintignore --ext .ts",
             "lint-fix":"npx eslint src --fix"
-    ```
+             ```
         * add some rules in `eslint.json`
+
         ```json
         "rules": {
         "no-unused-vars": "error",

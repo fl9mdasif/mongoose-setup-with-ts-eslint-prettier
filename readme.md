@@ -27,15 +27,17 @@
         * node dist/app.js
 
     8. setup app.ts & server.ts
-    9. [es-lint & prettier setup blog]('https://blog.logrocket.com/linting-typescript-eslint-prettier/')
+    9. [es-lint & prettier setup blog](https://blog.logrocket.com/linting-typescript-eslint-prettier/)
 
         * es lint setup
             * add some script to package.json
-                    ```
+
+        ```json
             "lint": "eslint src --ignore-path .eslintignore --ext .ts",
             "lint-fix":"npx eslint src --fix"
-    ```
+          ```
         * add some rules in `eslint.json`
+
         ```json
         "rules": {
         "no-unused-vars": "error",
@@ -46,4 +48,5 @@
         },
         "globals": {
             "process":"readonly"
-        }```
+        }
+        ```

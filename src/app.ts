@@ -1,4 +1,4 @@
-import express, { Application } from 'express';
+import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import { studentRoute } from './app/config/modules/students/route.student';
 
@@ -11,6 +11,10 @@ app.use(cors());
 // application routes
 // /api/v1/students/create-student
 app.use('/api/v1/students', studentRoute);
+
+app.get('/', (req: Request, res: Response) => {
+  res.send('Hello from next level dev');
+});
 
 app.all('*', (req, res) => {
   res.status(400).json({

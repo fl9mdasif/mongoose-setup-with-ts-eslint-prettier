@@ -1,18 +1,23 @@
 import { Schema, model } from 'mongoose';
 import {
-  Guardian,
-  LocalGuardian,
+  StudentModel,
+  TGuardian,
+  TLocalGuardian,
   TStudent,
-  UserName,
+  TUserName,
 } from './students/interface.student';
+import bcrypt from 'bcrypt';
+import config from '../config';
 
 // sub schema
-const userNameSchema = new Schema<UserName>({
+const userNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
     required: [true, 'First name is required'],
+    maxlength: [20, "first name can't be greater than 20 by length"],
     validate: function (value: string) {
       // validate mongoose inbuilt validator
+
       const nameCapitalized = value.charAt(0).toUpperCase() + value.slice(1);
       return value === nameCapitalized;
     },
@@ -27,7 +32,7 @@ const userNameSchema = new Schema<UserName>({
 });
 
 // sub schema
-const guardianSchema = new Schema<Guardian>({
+const guardianSchema = new Schema<TGuardian>({
   fatherName: {
     type: String,
     required: [true, "Father's name is required"],
@@ -55,7 +60,7 @@ const guardianSchema = new Schema<Guardian>({
 });
 
 // sub schema
-const localGuardianSchema = new Schema<LocalGuardian>({
+const localGuardianSchema = new Schema<TLocalGuardian>({
   name: {
     type: String,
     required: [true, "Local guardian's name is required"],
@@ -74,10 +79,16 @@ const localGuardianSchema = new Schema<LocalGuardian>({
   },
 });
 
-const studentSchema = new Schema<TStudent>({
+const studentSchema = new Schema<TStudent, StudentModel>({
   id: {
     type: String,
+    required: true,
+    index: true,
     unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
   },
   name: userNameSchema,
   gender: {
@@ -130,8 +141,46 @@ const studentSchema = new Schema<TStudent>({
     required: [true, 'Status is required'],
     default: 'active',
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-export const StudentModel = model<TStudent>('Student', studentSchema);
+// Query Middleware
 
-// Student is the collection name
+// creating middleware
+studentSchema.pre('save', async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const student = this;
+
+  // console.log('pre', student.password);
+  // Store hash in your password DB.
+  student.password = await bcrypt.hash(
+    student.password,
+    Number(config.bcrypt_salt_round),
+  );
+  next();
+});
+
+// after staved data that works {password = ""}
+studentSchema.post('save', function (document, next) {
+  document.password = '';
+  next();
+});
+
+// creating custom static methods
+studentSchema.statics.isUserExists = async function (id: string) {
+  const existingUser = await Student.findOne({ id });
+  return existingUser;
+};
+
+// custom instance method
+// studentSchema.methods.isUserExists = async function (id: string) {
+//   const existingUser = await Student.findOne({ id });
+//   return existingUser;
+// };
+
+export const Student = model<TStudent, StudentModel>('Student', studentSchema);
+
+// 'Student' is the collection name

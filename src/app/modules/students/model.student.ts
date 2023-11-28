@@ -5,9 +5,9 @@ import {
   TLocalGuardian,
   TStudent,
   TUserName,
-} from './students/interface.student';
+} from './interface.student';
 import bcrypt from 'bcrypt';
-import config from '../config';
+import config from '../../config';
 
 // sub schema
 const userNameSchema = new Schema<TUserName>({
@@ -79,83 +79,111 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
   },
 });
 
-const studentSchema = new Schema<TStudent, StudentModel>({
-  id: {
-    type: String,
-    required: true,
-    index: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  name: userNameSchema,
-  gender: {
-    type: String,
-    enum: {
-      values: ['male', 'female'],
-      message: '{VALUE} is not matched',
+const studentSchema = new Schema<TStudent, StudentModel>(
+  {
+    id: {
+      type: String,
+      required: true,
+      index: true,
+      unique: true,
     },
-    required: [true, 'Gender is required'],
-  },
-  dateOfBirth: { type: String },
-  email: {
-    type: String,
-    unique: true,
-    required: [true, 'Email is required'],
-  },
-  contactNo: {
-    type: String,
-    required: [true, 'Contact number is required'],
-    maxlength: [14, 'It should be 11 digit or 13 digit include 88'],
-  },
-  emergencyContactNo: {
-    type: String,
-    required: [true, 'Emergency contact number is required'],
-  },
-  bloodGroup: {
-    type: String,
-    enum: {
-      values: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
-      message: '{VALUE} is not a valid blood group',
+    password: {
+      type: String,
+      required: true,
+    },
+    user: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'user Id is required'],
+      unique: true,
+      ref: 'User', // which model to reference
+    },
+    name: userNameSchema,
+    gender: {
+      type: String,
+      enum: {
+        values: ['male', 'female'],
+        message: '{VALUE} is not matched',
+      },
+      required: [true, 'Gender is required'],
+    },
+    dateOfBirth: { type: String },
+    email: {
+      type: String,
+      unique: true,
+      required: [true, 'Email is required'],
+    },
+    contactNo: {
+      type: String,
+      required: [true, 'Contact number is required'],
+      maxlength: [14, 'It should be 11 digit or 13 digit include 88'],
+    },
+    emergencyContactNo: {
+      type: String,
+      required: [true, 'Emergency contact number is required'],
+    },
+    bloodGroup: {
+      type: String,
+      enum: {
+        values: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+        message: '{VALUE} is not a valid blood group',
+      },
+    },
+    presentAddress: {
+      type: String,
+      required: [true, 'Present address is required'],
+    },
+    permanentAddress: {
+      type: String,
+      required: [true, 'Permanent address is required'],
+    },
+    guardian: guardianSchema,
+    localGuardian: localGuardianSchema,
+    profileImg: { type: String },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
-  presentAddress: {
-    type: String,
-    required: [true, 'Present address is required'],
-  },
-  permanentAddress: {
-    type: String,
-    required: [true, 'Permanent address is required'],
-  },
-  guardian: guardianSchema,
-  localGuardian: localGuardianSchema,
-  profileImg: { type: String },
-  isActive: {
-    type: String,
-    enum: {
-      values: ['active', 'blocked'],
-      message: '{VALUE} is not a valid status',
+  {
+    toJSON: {
+      virtuals: true,
     },
-    required: [true, 'Status is required'],
-    default: 'active',
   },
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
+);
+
+// Virtual adds a new field
+
+studentSchema.virtual('fullName').get(function () {
+  return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName}`;
 });
 
 // Query Middleware
 
+studentSchema.pre('find', function (next) {
+  this.find({ isDeleted: { $ne: true } }); // checks isDeleted
+  next();
+});
+
+studentSchema.pre('findOne', function (next) {
+  this.findOne({ isDeleted: { $ne: true } }); // checks isDeleted
+  next();
+});
+
+// match and return if isDeleted is false?
+
+studentSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
+});
 // creating middleware
+
 studentSchema.pre('save', async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const student = this;
 
-  // console.log('pre', student.password);
   // Store hash in your password DB.
+
   student.password = await bcrypt.hash(
     student.password,
     Number(config.bcrypt_salt_round),

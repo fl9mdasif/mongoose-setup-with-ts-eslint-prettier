@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
-import { studentRoute } from './app/modules/students/route.student';
-import { userRoute } from './app/modules/user/route.user';
+import globalErrorHandler from './app/middlewares/globalErrorHandler';
+import notFound from './app/middlewares/notFound';
+import router from './app/routes';
 
 const app: Application = express();
 
@@ -11,18 +13,16 @@ app.use(cors());
 
 // application routes
 // /api/v1/students/create-student
-app.use('/api/v1/students', studentRoute);
-app.use('/api/v1/users', userRoute);
+app.use('/api/v1', router);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello from next level dev');
 });
 
-app.all('*', (req, res) => {
-  res.status(400).json({
-    success: false,
-    message: 'Route not find',
-  });
-});
+// not found middleware with http-status
+app.use(notFound);
+
+// global err handler middleware. must declare it in the last off the file
+app.use(globalErrorHandler);
 
 export default app;

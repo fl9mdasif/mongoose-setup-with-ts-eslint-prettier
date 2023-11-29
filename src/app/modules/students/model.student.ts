@@ -6,8 +6,6 @@ import {
   TStudent,
   TUserName,
 } from './interface.student';
-import bcrypt from 'bcrypt';
-import config from '../../config';
 
 // sub schema
 const userNameSchema = new Schema<TUserName>({
@@ -87,10 +85,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       index: true,
       unique: true,
     },
-    password: {
-      type: String,
-      required: true,
-    },
+
     user: {
       type: Schema.Types.ObjectId,
       required: [true, 'user Id is required'],
@@ -177,25 +172,6 @@ studentSchema.pre('aggregate', function (next) {
   next();
 });
 // creating middleware
-
-studentSchema.pre('save', async function (next) {
-  // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const student = this;
-
-  // Store hash in your password DB.
-
-  student.password = await bcrypt.hash(
-    student.password,
-    Number(config.bcrypt_salt_round),
-  );
-  next();
-});
-
-// after staved data that works {password = ""}
-studentSchema.post('save', function (document, next) {
-  document.password = '';
-  next();
-});
 
 // creating custom static methods
 studentSchema.statics.isUserExists = async function (id: string) {

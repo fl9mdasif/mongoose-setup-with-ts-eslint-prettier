@@ -1,66 +1,66 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { StudentServices } from './service.student';
+import sendResponse from '../../utils/sendResponse';
+import httpStatus from 'http-status';
 
-const getAllStudents = async (req: Request, res: Response) => {
+const getAllStudents = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const result = await StudentServices.getAllStudents();
 
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: 'Student get successfully',
+      message: 'Student fetched Successfully',
       data: result,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err.message || 'Something went wrong',
-      error: err,
-    });
+  } catch (err) {
+    next(err);
   }
 };
 
 // single student
-
-const getSingleStudent = async (req: Request, res: Response) => {
+const getSingleStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { studentId } = req.params;
     const result = await StudentServices.getSingleStudent(studentId);
 
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: 'single Students are retrieved successfully',
+      message: 'Single Student fetched Successfully',
       data: result,
     });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: 'Something went wrong',
-      error: err,
-    });
-    // console.log(err);
+    next(err);
   }
 };
 
-const deleteStudent = (req: Request, res: Response) => {
+const deleteStudent = (req: Request, res: Response, next: NextFunction) => {
   try {
     const { studentId } = req.params;
 
     const result = StudentServices.deleteSingleStudent(studentId);
     // return result
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: 'Students Update retrieved successfully',
+      message: 'Student deleted Successfully',
       data: result,
     });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: 'Something went wrong',
-      error: err,
-    });
+    next(err);
   }
 };
+
 export const studentControllers = {
   getAllStudents,
   getSingleStudent,

@@ -145,6 +145,11 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       type: localGuardianSchema,
       required: [true, 'Local guardian information is required'],
     },
+    admissionSemester: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'id is required'],
+      ref: 'AcademicSemester',
+    },
     profileImg: { type: String },
     // admissionSemester: {
     //   type: Schema.Types.ObjectId,

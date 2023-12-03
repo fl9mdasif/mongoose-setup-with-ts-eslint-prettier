@@ -42,43 +42,27 @@ const localGuardianValidationSchema = z.object({
     .string()
     .min(1, { message: "Local guardian's address is required" }),
 });
-
-export const studentValidationSchema = z.object({
-  id: z.string(),
-  password: z.string().max(20, { message: 'password must be within 20 char' }),
-  name: userNameValidationSchema,
-  gender: z.enum(['male', 'female']),
-  dateOfBirth: z.string().optional(),
-  email: z.string().email({ message: 'Email @ is required' }),
-  contactNo: z
-    .string()
-    .min(1, { message: 'Contact number is required' })
-    .max(14, { message: 'It should be 11 digits or 13 digits including 88' }),
-  emergencyContactNo: z
-    .string()
-    .min(1, { message: 'Emergency contact number is required' }),
-  bloodGroup: z
-    .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
-    .optional(),
-  presentAddress: z.string().min(1, { message: 'Present address is required' }),
-  permanentAddress: z
-    .string()
-    .min(1, { message: 'Permanent address is required' }),
-  guardian: guardianValidationSchema,
-  localGuardian: localGuardianValidationSchema,
-  profileImg: z.string().optional(),
-  isActive: z.enum(['active', 'blocked']),
-  isDeleted: z.boolean(),
+const createStudentValidationSchema = z.object({
+  body: z.object({
+    password: z.string().max(20),
+    student: z.object({
+      name: userNameValidationSchema,
+      gender: z.enum(['male', 'female', 'other']),
+      dateOfBirth: z.string().optional(),
+      email: z.string().email(),
+      contactNo: z.string(),
+      emergencyContactNo: z.string(),
+      bloodGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']),
+      presentAddress: z.string(),
+      permanentAddress: z.string(),
+      guardian: guardianValidationSchema,
+      localGuardian: localGuardianValidationSchema,
+      // admissionSemester: z.string(),
+      profileImg: z.string(),
+    }),
+  }),
 });
 
-// Example usage:
-// const validData = {
-//   // ... your valid data here
-// };
-
-// try {
-//   const validatedData = studentValidationSchema.parse(validData);
-//   console.log("Validation passed:", validatedData);
-// } catch (error) {
-//   console.error("Validation failed:", error.errors);
-// }
+export const studentValidations = {
+  createStudentValidationSchema,
+};

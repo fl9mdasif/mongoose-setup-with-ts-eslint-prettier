@@ -147,7 +147,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
     },
     admissionSemester: {
       type: Schema.Types.ObjectId,
-      required: [true, 'id is required'],
+      required: [true, 'academic_id is required'],
       ref: 'AcademicSemester',
     },
     profileImg: { type: String },

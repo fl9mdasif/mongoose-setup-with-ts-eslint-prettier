@@ -6,6 +6,8 @@ import {
   TStudent,
   TUserName,
 } from './interface.student';
+import AppError from '../../errors/AppErrors';
+import httpStatus from 'http-status';
 
 // sub schema
 const userNameSchema = new Schema<TUserName>(
@@ -151,10 +153,10 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       ref: 'AcademicSemester',
     },
     profileImg: { type: String },
-    // admissionSemester: {
-    //   type: Schema.Types.ObjectId,
-    //   ref: 'AcademicSemester',
-    // },
+    academicDepartment: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicDepartment',
+    },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -174,24 +176,33 @@ studentSchema.virtual('fullName').get(function () {
 });
 
 // Query Middleware
-
 studentSchema.pre('find', function (next) {
-  this.find({ isDeleted: { $ne: true } }); // checks isDeleted
+  this.find({ isDeleted: { $ne: true } });
   next();
 });
 
 studentSchema.pre('findOne', function (next) {
-  this.findOne({ isDeleted: { $ne: true } }); // checks isDeleted
+  this.find({ isDeleted: { $ne: true } });
   next();
 });
-
-// match and return if isDeleted is false?
 
 studentSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
   next();
 });
+
 // creating middleware
+studentSchema.pre('save', async function (next) {
+  const isStudentExist = await Student.findOne({
+    email: this.email,
+  });
+
+  if (isStudentExist) {
+    throw new AppError(httpStatus.NOT_FOUND, 'This email is already exist!');
+  }
+
+  next();
+});
 
 // creating custom static methods
 studentSchema.statics.isUserExists = async function (id: string) {

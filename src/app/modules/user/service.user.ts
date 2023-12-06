@@ -5,6 +5,7 @@ import { TStudent } from '../students/interface.student';
 import { Student } from '../students/model.student';
 import { TUser } from './interface.user';
 import { User } from './model.user';
+import { AcademicDepartment } from '../academicDeaptment/model.academicDepartment';
 
 const createStudent = async (password: string, studentData: TStudent) => {
   const userData: Partial<TUser> = {};
@@ -12,6 +13,7 @@ const createStudent = async (password: string, studentData: TStudent) => {
   // find academic semester info
   // get academic semester id from student.admissionSemester > then the id checks the admission year, code > then send the data to generateStudentId function for year and code
 
+  // check semester id exists
   const admissionSemesterId = await AcademicSemester.findById(
     studentData.admissionSemester,
   );
@@ -20,6 +22,15 @@ const createStudent = async (password: string, studentData: TStudent) => {
   if (!admissionSemesterId) {
     throw new Error('academic semester Id not found ');
   }
+  // check semester id exists
+  const academicDepartmentId = await AcademicDepartment.findById(
+    studentData.academicDepartment,
+  );
+  if (!academicDepartmentId) {
+    throw new Error('academic department Id not found ');
+  }
+
+  // set generated userId
   userData.id = await generateStudentId(admissionSemesterId);
 
   // set student role

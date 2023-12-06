@@ -7,21 +7,19 @@ import { TUser } from './interface.user';
 import { User } from './model.user';
 
 const createStudent = async (password: string, studentData: TStudent) => {
-  // built in static instance method
-  //   if (await Student.isUserExists(studentData.id)) {
-  //     throw new Error('Student already exists');
-  //   }
-
   const userData: Partial<TUser> = {};
 
   // find academic semester info
-
   // get academic semester id from student.admissionSemester > then the id checks the admission year, code > then send the data to generateStudentId function for year and code
 
   const admissionSemesterId = await AcademicSemester.findById(
     studentData.admissionSemester,
   );
+
   // generated id 2023010001
+  if (!admissionSemesterId) {
+    throw new Error('academic semester Id not found ');
+  }
   userData.id = await generateStudentId(admissionSemesterId);
 
   // set student role

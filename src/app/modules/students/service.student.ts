@@ -38,6 +38,7 @@ const updateStudentIntoDB = async (id: string, payload: Partial<TStudent>) => {
   const modifiedUpdatedData: Record<string, unknown> = {
     ...remainingStudentData,
   };
+  // console.log('UPDATE', payload);
 
   if (name && Object.keys(name).length) {
     for (const [key, value] of Object.entries(name)) {
@@ -57,10 +58,11 @@ const updateStudentIntoDB = async (id: string, payload: Partial<TStudent>) => {
     }
   }
 
-  const result = await Student.findOneAndUpdate({ id }, modifiedUpdatedData, {
-    new: true,
-    runValidators: true,
-  });
+  const result = await Student.findOneAndUpdate(
+    { id: id },
+    modifiedUpdatedData,
+    { new: true, runValidators: true },
+  );
   return result;
 };
 

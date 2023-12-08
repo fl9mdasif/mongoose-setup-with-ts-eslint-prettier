@@ -79,6 +79,7 @@ const createStudent = async (password: string, studentData: TStudent) => {
   } catch (err) {
     await session.abortTransaction();
     await session.endSession();
+    throw new Error('Failed to Create student');
   }
 
   // create a user -> transaction 1

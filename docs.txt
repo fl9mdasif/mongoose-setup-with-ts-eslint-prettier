@@ -22,3 +22,10 @@ try{
     await session.abortTransaction();
     await session.endSession();
 }
+
+
+# problem in my application
+1. after add Transaction unique email not working,
+2. update student required name
+3.
+4.

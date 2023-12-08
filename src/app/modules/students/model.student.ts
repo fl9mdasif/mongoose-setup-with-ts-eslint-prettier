@@ -181,8 +181,13 @@ studentSchema.pre('find', function (next) {
   next();
 });
 
-studentSchema.pre('findOne', function (next) {
+studentSchema.pre('findOne', async function (next) {
   this.find({ isDeleted: { $ne: true } });
+  // const isStudentExist = await Student.findOne({ id: this.id });
+
+  // if (!isStudentExist) {
+  //   throw new AppError(httpStatus.NOT_FOUND, 'Student does not exist!');
+  // }
   next();
 });
 

@@ -210,11 +210,15 @@ studentSchema.statics.isUserExists = async function (id: string) {
   return existingUser;
 };
 
-// custom instance method
-// studentSchema.methods.isUserExists = async function (id: string) {
-//   const existingUser = await Student.findOne({ id });
-//   return existingUser;
-// };
+// studentSchema.pre('findOneAndUpdate', async function (next) {
+//   const isStudentExists = await Student.findOne({ id: this.id });
+//   const isUserExists = await User.findOne({ id: this.id });
+
+//   if (!isStudentExists && isUserExists) {
+//     throw new AppError(httpStatus.NOT_FOUND, 'Students does not exists !');
+//   }
+//   next();
+// });
 
 export const Student = model<TStudent, StudentModel>('Student', studentSchema);
 

@@ -5,8 +5,37 @@ import AppError from '../../errors/AppErrors';
 import httpStatus from 'http-status';
 import { User } from '../user/model.user';
 
-const getAllStudents = async () => {
-  const result = await Student.find()
+const getAllStudents = async (query: Record<string, unknown>) => {
+  // copy query
+  const queryObj = { ...query };
+
+  let searchTerm = '';
+  if (query?.searchTerm) {
+    searchTerm = query.searchTerm as string;
+  }
+
+  const studentSearchableField = [
+    'email',
+    'name.firstName',
+    'name.middleName',
+    'name.LastName',
+    'guardian.fatherName',
+    'permanentAddress',
+  ];
+
+  // full match with key and value
+  const searchQuery = Student.find({
+    $or: studentSearchableField.map((field) => ({
+      [field]: { $regex: searchTerm, $options: 'i' },
+    })),
+  });
+
+  // delete searchTerm
+  const excludeQuery = ['searchTerm'];
+  excludeQuery.forEach((el) => delete queryObj[el]);
+
+  const result = await searchQuery
+    .find(queryObj)
     .populate('admissionSemester')
     .populate({
       path: 'academicDepartment',
@@ -98,10 +127,11 @@ const deleteSingleStudent = async (id: string) => {
     await session.endSession();
 
     return deletedStudent;
-  } catch (err) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
     await session.abortTransaction();
     await session.endSession();
-    throw new Error('Failed to delete student');
+    throw new Error(err);
   }
 };
 

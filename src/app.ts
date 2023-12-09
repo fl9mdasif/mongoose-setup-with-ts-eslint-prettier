@@ -19,7 +19,14 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Hello from next level dev');
 });
 
+const test = async (req: Request, res: Response) => {
+  const a = 10;
+  res.send(a);
+};
+
+app.get('/a', test);
 // not found middleware with http-status
+
 app.use(notFound);
 
 // global err handler middleware. must declare it in the last off the file

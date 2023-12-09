@@ -76,10 +76,11 @@ const createStudent = async (password: string, studentData: TStudent) => {
     await session.endSession(); // step 5
 
     return newStudent;
-  } catch (err) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
     await session.abortTransaction();
     await session.endSession();
-    throw new Error('Failed to Create student');
+    throw new Error(err);
   }
 
   // create a user -> transaction 1

@@ -4,77 +4,30 @@ import { Student } from './model.student';
 import AppError from '../../errors/AppErrors';
 import httpStatus from 'http-status';
 import { User } from '../user/model.user';
+import QueryBuilder from '../../builder/QueryBuilder';
+import { studentSearchableField } from './constant.student';
 
 const getAllStudents = async (query: Record<string, unknown>) => {
-  //
-  const studentSearchableField = [
-    'email',
-    'name.firstName',
-    'name.middleName',
-    'name.LastName',
-    'guardian.fatherName',
-    'permanentAddress',
-  ];
+  // instance
+  const studentQuery = new QueryBuilder(
+    Student.find()
+      .populate('admissionSemester')
+      .populate({
+        path: 'academicDepartment',
+        populate: {
+          path: 'academicFaculty',
+        },
+      }),
+    query,
+  )
+    .search(studentSearchableField)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
 
-  // copy query
-  const queryObj = { ...query };
-
-  let searchTerm = '';
-  if (query?.searchTerm) {
-    searchTerm = query.searchTerm as string;
-  }
-
-  // full match with key and value
-  const searchQuery = Student.find({
-    $or: studentSearchableField.map((field) => ({
-      [field]: { $regex: searchTerm, $options: 'i' },
-    })),
-  });
-
-  // filter
-  const excludeQuery = ['searchTerm', 'sort', 'limit', 'page'];
-  excludeQuery.forEach((el) => delete queryObj[el]);
-
-  // filter query exact match
-  const filterQuery = searchQuery
-    .find(queryObj)
-    .populate('admissionSemester')
-    .populate({
-      path: 'academicDepartment',
-      populate: {
-        path: 'academicFaculty',
-      },
-    });
-
-  // sort query
-  let sort = '-createdAt';
-
-  if (query.sort) {
-    sort = query.sort as string;
-  }
-
-  const sortQuery = filterQuery.sort(sort);
-
-  //limit query
-  let limit = 1;
-  let skip = 0;
-
-  if (query.limit) {
-    limit = Number(query.limit);
-  }
-
-  // pagination
-
-  let page = 1;
-  if (query.page) {
-    page = Number(query.page);
-    skip = (page - 1) * limit;
-  }
-
-  const paginateQuery = sortQuery.skip(skip);
-
-  const limitQuery = await paginateQuery.limit(limit);
-  return limitQuery;
+  const result = await studentQuery.modelQuery;
+  return result;
 };
 
 // single user

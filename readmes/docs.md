@@ -38,3 +38,10 @@ await session.endSession();
 2. update student required name
 3.
 4.
+
+### field filtering with `method chaining`
+
+```query
+query.select('name email') // include name and email exclude other fields
+// rest api link =>  link?field=name,email
+```

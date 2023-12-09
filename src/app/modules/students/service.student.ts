@@ -6,14 +6,7 @@ import httpStatus from 'http-status';
 import { User } from '../user/model.user';
 
 const getAllStudents = async (query: Record<string, unknown>) => {
-  // copy query
-  const queryObj = { ...query };
-
-  let searchTerm = '';
-  if (query?.searchTerm) {
-    searchTerm = query.searchTerm as string;
-  }
-
+  //
   const studentSearchableField = [
     'email',
     'name.firstName',
@@ -23,6 +16,14 @@ const getAllStudents = async (query: Record<string, unknown>) => {
     'permanentAddress',
   ];
 
+  // copy query
+  const queryObj = { ...query };
+
+  let searchTerm = '';
+  if (query?.searchTerm) {
+    searchTerm = query.searchTerm as string;
+  }
+
   // full match with key and value
   const searchQuery = Student.find({
     $or: studentSearchableField.map((field) => ({
@@ -30,11 +31,12 @@ const getAllStudents = async (query: Record<string, unknown>) => {
     })),
   });
 
-  // delete searchTerm
-  const excludeQuery = ['searchTerm'];
+  // filter
+  const excludeQuery = ['searchTerm', 'sort', 'limit', 'page'];
   excludeQuery.forEach((el) => delete queryObj[el]);
 
-  const result = await searchQuery
+  // filter query exact match
+  const filterQuery = searchQuery
     .find(queryObj)
     .populate('admissionSemester')
     .populate({
@@ -43,9 +45,39 @@ const getAllStudents = async (query: Record<string, unknown>) => {
         path: 'academicFaculty',
       },
     });
-  return result;
+
+  // sort query
+  let sort = '-createdAt';
+
+  if (query.sort) {
+    sort = query.sort as string;
+  }
+
+  const sortQuery = filterQuery.sort(sort);
+
+  //limit query
+  let limit = 1;
+  let skip = 0;
+
+  if (query.limit) {
+    limit = Number(query.limit);
+  }
+
+  // pagination
+
+  let page = 1;
+  if (query.page) {
+    page = Number(query.page);
+    skip = (page - 1) * limit;
+  }
+
+  const paginateQuery = sortQuery.skip(skip);
+
+  const limitQuery = await paginateQuery.limit(limit);
+  return limitQuery;
 };
 
+// single user
 const getSingleStudent = async (id: string) => {
   //  const result = await Student.findOne({ id });
   const result = await Student.findOne({ id })
@@ -60,7 +92,7 @@ const getSingleStudent = async (id: string) => {
   return result;
 };
 
-// update not-working
+// update user
 const updateStudentIntoDB = async (id: string, payload: Partial<TStudent>) => {
   const { name, guardian, localGuardian, ...remainingStudentData } = payload;
 

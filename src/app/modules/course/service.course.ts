@@ -35,8 +35,36 @@ const getSingleCourse = async (id: string) => {
 
 // update
 const updateCourse = async (id: string, updatedData: Partial<TCourse>) => {
-  const result = Course.findByIdAndUpdate(id, updatedData, { new: true });
-  return result;
+  const { preRequisiteCourses, ...courseRemainingData } = updatedData;
+
+  const updatedBasicCourseInfo = Course.findByIdAndUpdate(
+    id,
+    courseRemainingData,
+    { new: true, runValidators: true },
+  );
+
+  if (!updatedBasicCourseInfo) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Failed to update course');
+  }
+
+  // check if there is any pre requisite courses to update
+  if (preRequisiteCourses && preRequisiteCourses.length > 0) {
+    // filter out the deleted fields
+    const deletedPreRequisites = preRequisiteCourses
+      .filter((el) => el.course && el.isDeleted)
+      .map((el) => el.course);
+
+    // const deletedPreRequisiteCourses =
+
+    // remove preRequestCourse
+    await Course.findByIdAndUpdate(id, {
+      $pull: {
+        preRequisiteCourses: { course: { $in: deletedPreRequisites } },
+      },
+    });
+  }
+
+  return updatedBasicCourseInfo;
 };
 
 // delete

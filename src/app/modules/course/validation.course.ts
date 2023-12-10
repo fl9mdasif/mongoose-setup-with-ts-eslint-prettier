@@ -21,6 +21,10 @@ const updatePreRequisiteCourseValidationSchema = z.object({
   isDeleted: z.boolean().optional(),
 });
 
+// partial()
+// if the field is required in original Schema then it should be required in update schema
+// const updateCourseValidationSchema = createCourseValidationSchema.partial();
+
 const updateCourseValidationSchema = z.object({
   body: z.object({
     title: z.string().optional(),

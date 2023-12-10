@@ -14,18 +14,18 @@ Model.find()
 
 ### id method
 
-Model.findById()
-Model.findByIdAndDelete()
-Model.findByIdAndRemove()
-Model.findByIdAndUpdate()
+- Model.findById()
+- Model.findByIdAndDelete()
+- Model.findByIdAndRemove()
+- Model.findByIdAndUpdate()
 
 ### normal custom field search with custom id or others field
 
-Model.findOne()
-Model.findOneAndDelete()
-Model.findOneAndReplace()
-Model.findOneAndUpdate()
+- Model.findOne()
+- Model.findOneAndDelete()
+- Model.findOneAndReplace()
+- Model.findOneAndUpdate()
 
-Model.replaceOne()
-Model.updateMany()
-Model.updateOne()
+- Model.replaceOne()
+- Model.updateMany()
+- Model.updateOne()

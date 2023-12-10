@@ -1,18 +1,18 @@
 import config from '../../config';
+import mongoose from 'mongoose';
+import httpStatus from 'http-status';
+import AppError from '../../errors/AppErrors';
 import {
   generateAdminId,
   generateFacultyId,
   generateStudentId,
 } from './user.utils';
 import { AcademicSemester } from '../academicSemester/model.academicSemester';
+import { AcademicDepartment } from '../academicDepartment/model.academicDepartment';
 import { TStudent } from '../students/interface.student';
 import { Student } from '../students/model.student';
 import { TUser } from './interface.user';
 import { User } from './model.user';
-import { AcademicDepartment } from '../academicDepartment/model.academicDepartment';
-import mongoose from 'mongoose';
-import httpStatus from 'http-status';
-import AppError from '../../errors/AppErrors';
 import { TFaculty } from '../faculty/interface.faculty';
 import { Faculty } from '../faculty/model.faculty';
 import { TAdmin } from '../admin/interface.admin';

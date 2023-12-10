@@ -51,7 +51,7 @@ const getSingleCourse = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
 // update
 const updateCourse = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const { updatedData } = req.body;
+    const updatedData = req.body;
     const result = yield service_course_1.courseServices.updateCourse(id, updatedData);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
@@ -71,10 +71,35 @@ const deleteCourse = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
         data: result,
     });
 }));
+// assign faculty into course
+const assignFacultiesWithCourse = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { courseId } = req.params;
+    const { faculties } = req.body;
+    const result = yield service_course_1.courseServices.assignFacultiesWithCourseIntoDB(courseId, faculties);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Faculties assigned  successfully',
+        data: result,
+    });
+}));
+const removeFacultiesFromCourse = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { courseId } = req.params;
+    const { faculties } = req.body;
+    const result = yield service_course_1.courseServices.removeFacultiesFromCourseFromDB(courseId, faculties);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Faculties removed  successfully',
+        data: result,
+    });
+}));
 exports.courseControllers = {
     createCourse,
     getAllCourses,
     getSingleCourse,
     updateCourse,
     deleteCourse,
+    assignFacultiesWithCourse,
+    removeFacultiesFromCourse,
 };

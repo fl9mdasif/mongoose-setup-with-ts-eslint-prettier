@@ -203,12 +203,12 @@ const updateOfferedCourseIntoDB = async (
     endTime,
   };
 
-  if (hasTimeConflict(assignedSchedules, newSchedule)) {
-    throw new AppError(
-      httpStatus.CONFLICT,
-      `This faculty is not available at that time ! Choose other time or day`,
-    );
-  }
+  //   if (hasTimeConflict(assignedSchedules, newSchedule)) {
+  //     throw new AppError(
+  //       httpStatus.CONFLICT,
+  //       `This faculty is not available at that time ! Choose other time or day`,
+  //     );
+  //   }
 
   const result = await OfferedCourse.findByIdAndUpdate(id, payload, {
     new: true,

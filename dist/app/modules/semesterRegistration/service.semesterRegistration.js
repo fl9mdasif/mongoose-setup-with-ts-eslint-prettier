@@ -19,6 +19,8 @@ const model_academicSemester_1 = require("../academicSemester/model.academicSeme
 const model_semesterRegistration_1 = require("./model.semesterRegistration");
 const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
 const constant_semesterRegistration_1 = require("./constant.semesterRegistration");
+const model_offeredCourse_1 = require("../offeredCourse/model.offeredCourse");
+const mongoose_1 = __importDefault(require("mongoose"));
 const createSemesterRegistration = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     // find academic sem
     const academicSemester = payload === null || payload === void 0 ? void 0 : payload.academicSemester;
@@ -88,9 +90,57 @@ const updateSemesterRegistration = (id, payload) => __awaiter(void 0, void 0, vo
     });
     return result;
 });
+// delete
+const deleteSemesterRegistrationFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    /**
+    * Step1: Delete associated offered courses.
+    * Step2: Delete semester registraton when the status is
+    'UPCOMING'.
+    **/
+    // checking if the semester registration is exist
+    const isSemesterRegistrationExists = yield model_semesterRegistration_1.SemesterRegistration.findById(id);
+    if (!isSemesterRegistrationExists) {
+        throw new AppErrors_1.default(http_status_1.default.NOT_FOUND, 'This registered semester is not found !');
+    }
+    // checking if the status is still "UPCOMING"
+    const semesterRegistrationStatus = isSemesterRegistrationExists.status;
+    if (semesterRegistrationStatus !== 'UPCOMING') {
+        throw new AppErrors_1.default(http_status_1.default.BAD_REQUEST, `You can not update as the registered semester is ${semesterRegistrationStatus}`);
+    }
+    const session = yield mongoose_1.default.startSession();
+    //deleting associated offered courses
+    try {
+        session.startTransaction();
+        const deletedOfferedCourse = yield model_offeredCourse_1.OfferedCourse.deleteMany({
+            semesterRegistration: id,
+        }, {
+            session,
+        });
+        if (!deletedOfferedCourse) {
+            throw new AppErrors_1.default(http_status_1.default.BAD_REQUEST, 'Failed to delete semester registration !');
+        }
+        const deletedSemesterRegistration = yield model_semesterRegistration_1.SemesterRegistration.findByIdAndDelete(id, {
+            session,
+            new: true,
+        });
+        if (!deletedSemesterRegistration) {
+            throw new AppErrors_1.default(http_status_1.default.BAD_REQUEST, 'Failed to delete semester registration !');
+        }
+        yield session.commitTransaction();
+        yield session.endSession();
+        return null;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }
+    catch (err) {
+        yield session.abortTransaction();
+        yield session.endSession();
+        throw new Error(err);
+    }
+});
 exports.semesterRegistrationServices = {
     createSemesterRegistration,
     getAllSemesterRegistrations,
     getSingleSemesterRegistration,
     updateSemesterRegistration,
+    deleteSemesterRegistrationFromDB,
 };

@@ -4,10 +4,10 @@ exports.offeredCourseValidations = void 0;
 const zod_1 = require("zod");
 const constant_offeredCourse_1 = require("./constant.offeredCourse");
 const timeStringSchema = zod_1.z.string().refine((time) => {
-    const regex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/; // 00-09 10-19 20-23
+    const regex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/; // 00-09 10-19 20-23 : 00-59
     return regex.test(time);
 }, {
-    message: 'Invalid time format , expected "HH:MM" in 24 hours format',
+    message: 'Invalid time format, expected "HH:MM" in 24 hours format',
 });
 const createOfferedCourseValidationSchema = zod_1.z.object({
     body: zod_1.z
@@ -30,7 +30,7 @@ const createOfferedCourseValidationSchema = zod_1.z.object({
         const end = new Date(`1970-01-01T${body.endTime}:00`);
         return end > start;
     }, {
-        message: 'Start time should be before End time !  ',
+        message: 'Start-time should be greater End-time !  ',
     }),
 });
 const updateOfferedCourseValidationSchema = zod_1.z.object({

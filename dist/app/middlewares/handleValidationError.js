@@ -1,17 +1,16 @@
 "use strict";
+// import mongoose from 'mongoose';
+// import { TErrorSources, TGenericErrorResponse } from '../interface/error';
 Object.defineProperty(exports, "__esModule", { value: true });
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleValidationError = (err) => {
-    const errorSources = Object.values(err.errors).map((val) => {
-        return {
-            path: val === null || val === void 0 ? void 0 : val.path,
-            message: val === null || val === void 0 ? void 0 : val.message,
-        };
-    });
     const statusCode = 400;
+    // console.log(err);
     return {
         statusCode,
         message: 'Validation Error',
-        errorSources,
+        // errorMessage: `${err.category.value} is not a valid ID`,
+        errorDetails: err,
     };
 };
 exports.default = handleValidationError;

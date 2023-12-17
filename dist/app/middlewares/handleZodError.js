@@ -1,17 +1,21 @@
 "use strict";
+// import { ZodError, ZodIssue } from 'zod';
+// import { TErrorSources, TGenericErrorResponse } from '../interface/error';
 Object.defineProperty(exports, "__esModule", { value: true });
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleZodError = (err) => {
-    const errorSources = err.issues.map((issue) => {
-        return {
-            path: issue === null || issue === void 0 ? void 0 : issue.path[issue.path.length - 1],
-            message: issue.message,
-        };
-    });
     const statusCode = 400;
+    // get the required path form error response
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const errorMessages = err.issues.map((issue) => {
+        const pathNames = issue.path.map(String).join(', '); // Join path names with ', '
+        return `${pathNames.slice(6)} is required`;
+    });
+    const formattedError = errorMessages.join('. ');
     return {
         statusCode,
-        message: 'Zod Validation Error',
-        errorSources,
+        message: 'Validation Error',
+        errorMessage: `${formattedError} `,
     };
 };
 exports.default = handleZodError;

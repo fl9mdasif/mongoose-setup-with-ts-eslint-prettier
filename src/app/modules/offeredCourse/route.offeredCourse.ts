@@ -15,6 +15,7 @@ router.post(
   OfferedCourseControllers.createOfferedCourse,
 );
 
+// update
 router.patch(
   '/:id',
   validateRequest(offeredCourseValidations.updateOfferedCourseValidationSchema),

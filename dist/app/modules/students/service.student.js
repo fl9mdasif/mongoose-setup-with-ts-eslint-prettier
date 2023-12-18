@@ -34,6 +34,7 @@ const constant_student_1 = require("./constant.student");
 const getAllStudents = (query) => __awaiter(void 0, void 0, void 0, function* () {
     // instance
     const studentQuery = new QueryBuilder_1.default(model_student_1.Student.find()
+        .populate('user')
         .populate('admissionSemester')
         .populate({
         path: 'academicDepartment',
@@ -53,6 +54,7 @@ const getAllStudents = (query) => __awaiter(void 0, void 0, void 0, function* ()
 const getSingleStudent = (id) => __awaiter(void 0, void 0, void 0, function* () {
     //  const result = await Student.findOne({ id });
     const result = yield model_student_1.Student.findById(id)
+        .populate('user')
         .populate('admissionSemester')
         .populate({
         path: 'academicDepartment',

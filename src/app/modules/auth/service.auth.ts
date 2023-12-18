@@ -55,6 +55,7 @@ const loginUser = async (payload: TLoginUser) => {
   };
 };
 
+// change password
 const changePassword = async (
   userData: JwtPayload,
   payload: { oldPassword: string; newPassword: string },
@@ -107,7 +108,7 @@ const changePassword = async (
       needsPasswordChange: false,
       passwordChangedAt: new Date(),
     },
-    { new: true },
+    { new: true, runValidators: true },
   );
 };
 export const authServices = {

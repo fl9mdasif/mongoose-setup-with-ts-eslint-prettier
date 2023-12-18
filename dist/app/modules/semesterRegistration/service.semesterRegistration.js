@@ -94,7 +94,7 @@ const updateSemesterRegistration = (id, payload) => __awaiter(void 0, void 0, vo
 const deleteSemesterRegistrationFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     /**
     * Step1: Delete associated offered courses.
-    * Step2: Delete semester registraton when the status is
+    * Step2: Delete semester registration when the status is
     'UPCOMING'.
     **/
     // checking if the semester registration is exist

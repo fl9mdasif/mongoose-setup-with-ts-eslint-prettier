@@ -18,10 +18,15 @@ const config_1 = __importDefault(require("../../config"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const userSchema = new mongoose_1.Schema({
     id: { type: String, required: true },
-    password: { type: String, required: true },
+    password: { type: String, required: true, select: 0 },
     needsPasswordChange: { type: Boolean, default: true },
+    passwordChangedAt: { type: Date },
     role: { type: String, enum: ['student', 'admin', 'faculty'] },
-    status: { type: String, enum: ['in-progress', 'blocked'] },
+    status: {
+        type: String,
+        enum: ['in-progress', 'blocked'],
+        default: 'in-progress',
+    },
     isDeleted: { type: Boolean, default: false },
 }, {
     timestamps: true, // gives create update time
@@ -41,4 +46,17 @@ userSchema.post('save', function (document, next) {
     document.password = '';
     next();
 });
+// for auth
+// find user exists
+userSchema.statics.isUserExistsByCustomId = function (id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield exports.User.findOne({ id }).select('+password');
+    });
+};
+// compare bcrypt password for auth
+userSchema.statics.isPasswordMatched = function (plainTextPassword, hashedPassword) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield bcrypt_1.default.compare(plainTextPassword, hashedPassword);
+    });
+};
 exports.User = (0, mongoose_1.model)('User', userSchema);

@@ -10,8 +10,10 @@ const validateRequest_1 = __importDefault(require("../../middlewares/validateReq
 const validation_faculty_1 = require("../faculty/validation.faculty");
 const controller_user_1 = require("./controller.user");
 const validation_admin_1 = require("../admin/validation.admin");
+const auth_1 = __importDefault(require("../../middlewares/auth"));
+const constant_user_1 = require("./constant.user");
 const router = express_1.default.Router();
-router.post('/create-student', (0, validateRequest_1.default)(validation_student_1.studentValidations.createStudentValidationSchema), controller_user_1.userControllers.createStudent);
+router.post('/create-student', (0, auth_1.default)(constant_user_1.USER_ROLE.admin, constant_user_1.USER_ROLE.faculty), (0, validateRequest_1.default)(validation_student_1.studentValidations.createStudentValidationSchema), controller_user_1.userControllers.createStudent);
 router.post('/create-faculty', (0, validateRequest_1.default)(validation_faculty_1.createFacultyValidationSchema), controller_user_1.userControllers.createFaculty);
 router.post('/create-admin', (0, validateRequest_1.default)(validation_admin_1.createAdminValidationSchema), controller_user_1.userControllers.createAdmin);
 exports.userRoute = router;

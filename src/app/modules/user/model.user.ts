@@ -1,15 +1,19 @@
 import { Schema, model } from 'mongoose';
-import { TUser } from './interface.user';
+import { TUser, UserModel } from './interface.user';
 import config from '../../config';
 import bcrypt from 'bcrypt';
 
-const userSchema = new Schema<TUser>(
+const userSchema = new Schema<TUser, UserModel>(
   {
     id: { type: String, required: true },
-    password: { type: String, required: true },
+    password: { type: String, required: true, select: 0 },
     needsPasswordChange: { type: Boolean, default: true },
     role: { type: String, enum: ['student', 'admin', 'faculty'] },
-    status: { type: String, enum: ['in-progress', 'blocked'] },
+    status: {
+      type: String,
+      enum: ['in-progress', 'blocked'],
+      default: 'in-progress',
+    },
     isDeleted: { type: Boolean, default: false },
   },
   {
@@ -37,4 +41,18 @@ userSchema.post('save', function (document, next) {
   next();
 });
 
-export const User = model<TUser>('User', userSchema);
+// for auth
+// find user exists
+userSchema.statics.isUserExistsByCustomId = async function (id: string) {
+  return await User.findOne({ id }).select('+password');
+};
+
+// compare bcrypt password for auth
+userSchema.statics.isPasswordMatched = async function (
+  plainTextPassword,
+  hashedPassword,
+) {
+  return await bcrypt.compare(plainTextPassword, hashedPassword);
+};
+
+export const User = model<TUser, UserModel>('User', userSchema);

@@ -7,6 +7,7 @@ import { AdminServices } from './service.admin';
 const getAllAdmins = catchAsync(async (req, res) => {
   const result = await AdminServices.getAllAdminsFromDB(req.query);
 
+  // console.log('test', req.user);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

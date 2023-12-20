@@ -4,45 +4,70 @@ import AppError from '../errors/AppErrors';
 import httpStatus from 'http-status';
 import config from '../config';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { TUSerRole } from '../modules/user/interface.user';
+import { TUserRole } from '../modules/user/interface.user';
+import { User } from '../modules/user/model.user';
 
-const auth = (...requiredRole: TUSerRole[]) => {
+const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req?.headers?.authorization;
+    const token = req.headers.authorization;
 
-    // if token not sent
+    // checking if the token is missing
     if (!token) {
+      throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
+    }
+
+    // checking if the given token is valid
+    const decoded = jwt.verify(
+      token,
+      config.jwt_access_secret as string,
+    ) as JwtPayload;
+
+    const { role, userId, iat } = decoded;
+
+    // checking if the user is exist
+    const user = await User.isUserExistsByCustomId(userId);
+
+    if (!user) {
+      throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
+    }
+
+    // checking if the user is already deleted
+    const isDeleted = user?.isDeleted;
+
+    if (isDeleted) {
       throw new AppError(
-        httpStatus.UNAUTHORIZED,
-        'You are not a authorized user',
+        httpStatus.FORBIDDEN,
+        `This ${user.role} is deleted !`,
       );
     }
 
-    // verify a token symmetric
-    jwt.verify(
-      token,
-      config.jwt_access_secret as string,
-      function (err, decoded) {
-        if (err) {
-          throw new AppError(
-            httpStatus.UNAUTHORIZED,
-            'You are not a authorized user 1',
-          );
-        }
-        // decode
-        req.user = decoded as JwtPayload;
-        const role = (decoded as JwtPayload).role;
-        // console.log(role);
-        if (requiredRole && !requiredRole.includes(role)) {
-          throw new AppError(
-            httpStatus.UNAUTHORIZED,
-            `'${role}' is are not authorized`,
-          );
-        }
-        next();
-        // console.log(decoded); // bar
-      },
-    );
+    // checking if the user is blocked
+    const userStatus = user?.status;
+
+    if (userStatus === 'blocked') {
+      throw new AppError(httpStatus.FORBIDDEN, `This ${user.role} is blocked!`);
+    }
+
+    // check if password update time
+    if (
+      user.passwordChangedAt &&
+      User.isJWTIssuedBeforePasswordChanged(
+        user.passwordChangedAt,
+        iat as number,
+      )
+    ) {
+      throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized !');
+    }
+
+    if (requiredRoles && !requiredRoles.includes(role)) {
+      throw new AppError(
+        httpStatus.UNAUTHORIZED,
+        `'${role}' is are not authorized`,
+      );
+    }
+
+    req.user = decoded as JwtPayload;
+    next();
   });
 };
 

@@ -17,15 +17,15 @@ const changePasswordValidationSchema = zod_1.z.object({
         newPassword: zod_1.z.string({ required_error: 'Password is required' }),
     }),
 });
-// const refreshTokenValidationSchema = z.object({
-//   cookies: z.object({
-//     refreshToken: z.string({
-//       required_error: 'Refresh token is required!',
-//     }),
-//   }),
-// });
+const refreshTokenValidationSchema = zod_1.z.object({
+    cookies: zod_1.z.object({
+        refreshToken: zod_1.z.string({
+            required_error: 'Refresh token is required!',
+        }),
+    }),
+});
 exports.authValidation = {
     loginValidationSchema,
     changePasswordValidationSchema,
-    //   refreshTokenValidationSchema,
+    refreshTokenValidationSchema,
 };

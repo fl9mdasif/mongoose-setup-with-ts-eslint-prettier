@@ -19,6 +19,7 @@ const model_user_1 = require("../user/model.user");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const config_1 = __importDefault(require("../../config"));
+const utils_auth_1 = require("./utils.auth");
 const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     // 1. checking if the user is exist
     const user = yield model_user_1.User.isUserExistsByCustomId(payload.id);
@@ -44,11 +45,13 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         userId: user.id,
         role: user.role,
     };
-    const accessToken = jsonwebtoken_1.default.sign(jwtPayload, config_1.default.jwt_access_secret, {
-        expiresIn: '10d',
-    });
+    // create token
+    const accessToken = (0, utils_auth_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, config_1.default.jwt_access_expires_in);
+    // refresh token
+    const refreshToken = (0, utils_auth_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, config_1.default.jwt_refresh_expires_in);
     return {
         accessToken,
+        refreshToken,
         needsPasswordChange: user === null || user === void 0 ? void 0 : user.needsPasswordChange,
     };
 });
@@ -56,7 +59,7 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
 const changePassword = (userData, payload) => __awaiter(void 0, void 0, void 0, function* () {
     // 01. checking if the user is exist
     const user = yield model_user_1.User.isUserExistsByCustomId(userData.userId);
-    // console.log(user);
+    // console.log(userData);
     if (!user) {
         throw new AppErrors_1.default(http_status_1.default.NOT_FOUND, 'This user is not found !');
     }
@@ -85,8 +88,40 @@ const changePassword = (userData, payload) => __awaiter(void 0, void 0, void 0, 
         passwordChangedAt: new Date(),
     }, { new: true, runValidators: true });
 });
+const refreshToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
+    // checking if the given token is valid
+    const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwt_refresh_secret);
+    const { userId, iat } = decoded;
+    // checking if the user is exist
+    const user = yield model_user_1.User.isUserExistsByCustomId(userId);
+    if (!user) {
+        throw new AppErrors_1.default(http_status_1.default.NOT_FOUND, 'This user is not found !');
+    }
+    // checking if the user is already deleted
+    const isDeleted = user === null || user === void 0 ? void 0 : user.isDeleted;
+    if (isDeleted) {
+        throw new AppErrors_1.default(http_status_1.default.FORBIDDEN, 'This user is deleted !');
+    }
+    // checking if the user is blocked
+    const userStatus = user === null || user === void 0 ? void 0 : user.status;
+    if (userStatus === 'blocked') {
+        throw new AppErrors_1.default(http_status_1.default.FORBIDDEN, 'This user is blocked ! !');
+    }
+    if (user.passwordChangedAt &&
+        model_user_1.User.isJWTIssuedBeforePasswordChanged(user.passwordChangedAt, iat)) {
+        throw new AppErrors_1.default(http_status_1.default.UNAUTHORIZED, 'You are not authorized !');
+    }
+    const jwtPayload = {
+        userId: user.id,
+        role: user.role,
+    };
+    const accessToken = (0, utils_auth_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, config_1.default.jwt_access_expires_in);
+    return {
+        accessToken,
+    };
+});
 exports.authServices = {
     loginUser,
     changePassword,
-    // refreshToken,
+    refreshToken,
 };

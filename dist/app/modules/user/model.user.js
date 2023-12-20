@@ -53,6 +53,12 @@ userSchema.statics.isUserExistsByCustomId = function (id) {
         return yield exports.User.findOne({ id }).select('+password');
     });
 };
+// jwt password time checking
+userSchema.statics.isJWTIssuedBeforePasswordChanged = function (passwordChangedTimestamp, jwtIssuedTimestamp) {
+    // console.log(passwordChangedTimestamp, jwtIssuedTimestamp);
+    const passwordChangedTime = new Date(passwordChangedTimestamp).getTime() / 1000;
+    return passwordChangedTime > jwtIssuedTimestamp;
+};
 // compare bcrypt password for auth
 userSchema.statics.isPasswordMatched = function (plainTextPassword, hashedPassword) {
     return __awaiter(this, void 0, void 0, function* () {

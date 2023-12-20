@@ -12,7 +12,7 @@ export interface TUser {
 }
 
 // user role
-export type TUSerRole = keyof typeof USER_ROLE;
+export type TUserRole = keyof typeof USER_ROLE;
 export interface UserModel extends Model<TUser> {
   //instance methods for checking if the user exist
   // eslint-disable-next-line no-unused-vars
@@ -24,8 +24,10 @@ export interface UserModel extends Model<TUser> {
     // eslint-disable-next-line no-unused-vars
     hashedPassword: string,
   ): Promise<boolean>;
-  // isJWTIssuedBeforePasswordChanged(
-  //   passwordChangedTimestamp: Date,
-  //   jwtIssuedTimestamp: number,
-  // ): boolean;
+  isJWTIssuedBeforePasswordChanged(
+    // eslint-disable-next-line no-unused-vars
+    passwordChangedTimestamp: Date,
+    // eslint-disable-next-line no-unused-vars
+    jwtIssuedTimestamp: number,
+  ): boolean;
 }

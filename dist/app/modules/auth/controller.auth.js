@@ -28,47 +28,53 @@ const http_status_1 = __importDefault(require("http-status"));
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const service_auth_1 = require("./service.auth");
+const config_1 = __importDefault(require("../../config"));
 // import config from '../../config';
 const loginUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield service_auth_1.authServices.loginUser(req.body);
-    // const { refreshToken, accessToken, needsPasswordChange } = result;
-    //   res.cookie('refreshToken', refreshToken, {
-    //     secure: config.NODE_ENV === 'production',
-    //     httpOnly: true,
-    //   });
+    const { refreshToken, accessToken, needsPasswordChange } = result;
+    res.cookie('refreshToken', refreshToken, {
+        secure: config_1.default.NODE_ENV === 'production',
+        httpOnly: true,
+    });
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
         message: 'User is logged in successfully!',
         data: {
-            result,
+            accessToken,
+            needsPasswordChange,
         },
     });
 }));
 // change password
 const changePassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const passwordData = __rest(req.body, []);
-    // console.log(req.user, req.body);
+    // console.log(req);
     const result = yield service_auth_1.authServices.changePassword(req.user, passwordData);
+    // set cookie
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
         message: 'Password is updated successfully!',
+        data: {
+            result,
+        },
+    });
+}));
+const refreshToken = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { refreshToken } = req.cookies;
+    // console.log(refreshToken);
+    const result = yield service_auth_1.authServices.refreshToken(refreshToken);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Access token is retrieved successfully!',
         data: result,
     });
 }));
-// const refreshToken = catchAsync(async (req, res) => {
-//   const { refreshToken } = req.cookies;
-//   const result = await AuthServices.refreshToken(refreshToken);
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: 'Access token is retrieved successfully!',
-//     data: result,
-//   });
-// });
 exports.AuthControllers = {
     loginUser,
     changePassword,
-    //   refreshToken,
+    refreshToken,
 };

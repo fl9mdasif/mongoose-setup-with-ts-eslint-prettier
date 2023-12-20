@@ -48,6 +48,17 @@ userSchema.statics.isUserExistsByCustomId = async function (id: string) {
   return await User.findOne({ id }).select('+password');
 };
 
+// jwt password time checking
+userSchema.statics.isJWTIssuedBeforePasswordChanged = function (
+  passwordChangedTimestamp: Date,
+  jwtIssuedTimestamp: number,
+) {
+  // console.log(passwordChangedTimestamp, jwtIssuedTimestamp);
+  const passwordChangedTime =
+    new Date(passwordChangedTimestamp).getTime() / 1000;
+  return passwordChangedTime > jwtIssuedTimestamp;
+};
+
 // compare bcrypt password for auth
 userSchema.statics.isPasswordMatched = async function (
   plainTextPassword,

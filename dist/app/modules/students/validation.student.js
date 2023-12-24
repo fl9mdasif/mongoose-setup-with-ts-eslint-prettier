@@ -29,7 +29,7 @@ const createLocalGuardianValidationSchema = zod_1.z.object({
 });
 exports.createStudentValidationSchema = zod_1.z.object({
     body: zod_1.z.object({
-        password: zod_1.z.string().max(20),
+        password: zod_1.z.string().max(20).optional(),
         student: zod_1.z.object({
             name: createUserNameValidationSchema,
             gender: zod_1.z.enum(['male', 'female', 'other']),
@@ -43,7 +43,7 @@ exports.createStudentValidationSchema = zod_1.z.object({
             guardian: createGuardianValidationSchema,
             localGuardian: createLocalGuardianValidationSchema,
             admissionSemester: zod_1.z.string(),
-            profileImg: zod_1.z.string(),
+            // profileImg: z.string(),
             academicDepartment: zod_1.z.string(),
         }),
     }),

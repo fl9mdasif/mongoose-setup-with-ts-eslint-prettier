@@ -19,6 +19,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const userSchema = new mongoose_1.Schema({
     id: { type: String, required: true },
     password: { type: String, required: true, select: 0 },
+    email: { type: String, required: true, unique: true },
     needsPasswordChange: { type: Boolean, default: true },
     passwordChangedAt: { type: Date },
     role: { type: String, enum: ['student', 'admin', 'faculty'] },

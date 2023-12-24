@@ -28,6 +28,7 @@ const auth = (...requiredRoles) => {
         // checking if the given token is valid
         const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwt_access_secret);
         const { role, userId, iat } = decoded;
+        // console.log(decoded);
         // checking if the user is exist
         const user = yield model_user_1.User.isUserExistsByCustomId(userId);
         if (!user) {

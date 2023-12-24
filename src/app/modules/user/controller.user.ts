@@ -8,8 +8,13 @@ import AppError from '../../errors/AppErrors';
 const createStudent: RequestHandler = async (req, res, next) => {
   try {
     const { password, student: StudentData } = req.body;
+    // console.log(req.body);
 
-    const result = await UserServices.createStudent(password, StudentData);
+    const result = await UserServices.createStudent(
+      req.file,
+      password,
+      StudentData,
+    );
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
@@ -27,7 +32,11 @@ const createStudent: RequestHandler = async (req, res, next) => {
 const createFaculty = catchAsync(async (req, res) => {
   const { password, faculty: facultyData } = req.body;
 
-  const result = await UserServices.createFaculty(password, facultyData);
+  const result = await UserServices.createFaculty(
+    req.file,
+    password,
+    facultyData,
+  );
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -40,7 +49,7 @@ const createFaculty = catchAsync(async (req, res) => {
 const createAdmin = catchAsync(async (req, res) => {
   const { password, admin: adminData } = req.body;
 
-  const result = await UserServices.createAdmin(password, adminData);
+  const result = await UserServices.createAdmin(req.file, password, adminData);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -76,10 +85,11 @@ const changeStatus = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Status is updated successfully',
+    message: `${result?.role} Status is updated successfully`,
     data: result,
   });
 });
+
 export const userControllers = {
   createStudent,
   createFaculty,

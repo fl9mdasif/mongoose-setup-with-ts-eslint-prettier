@@ -16,5 +16,11 @@ const constant_user_1 = require("../user/constant.user");
 const router = express_1.default.Router();
 router.post('/login', (0, validateRequest_1.default)(validation_auth_1.authValidation.loginValidationSchema), controller_auth_1.AuthControllers.loginUser);
 router.post('/change-password', (0, auth_1.default)(constant_user_1.USER_ROLE.admin, constant_user_1.USER_ROLE.faculty, constant_user_1.USER_ROLE.student), (0, validateRequest_1.default)(validation_auth_1.authValidation.changePasswordValidationSchema), controller_auth_1.AuthControllers.changePassword);
-router.post('/refresh-token', (0, validateRequest_1.default)(validation_auth_1.authValidation.refreshTokenValidationSchema), controller_auth_1.AuthControllers.refreshToken);
+router.post('/refresh-token', 
+// auth('admin'),
+(0, validateRequest_1.default)(validation_auth_1.authValidation.refreshTokenValidationSchema), controller_auth_1.AuthControllers.refreshToken);
+// forget-password
+router.post('/forget-password', (0, validateRequest_1.default)(validation_auth_1.authValidation.forgetPasswordValidationSchema), controller_auth_1.AuthControllers.forgetPassword);
+// reset password
+router.post('/reset-password', (0, validateRequest_1.default)(validation_auth_1.authValidation.forgetPasswordValidationSchema), controller_auth_1.AuthControllers.resetPassword);
 exports.authRoutes = router;

@@ -217,6 +217,7 @@ const forgetPassword = async (userId: string) => {
   // console.log(resetLink);
 };
 
+// reset password
 const resetPassword = async (
   payload: { id: string; newPassword: string },
   token: string,
@@ -270,6 +271,7 @@ const resetPassword = async (
     },
   );
 };
+
 export const authServices = {
   loginUser,
   changePassword,

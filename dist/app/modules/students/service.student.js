@@ -52,8 +52,8 @@ const getAllStudents = (query) => __awaiter(void 0, void 0, void 0, function* ()
 });
 // single user
 const getSingleStudent = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    //  const result = await Student.findOne({ id });
-    const result = yield model_student_1.Student.findById(id)
+    //  const result = await Student.findOne({ id }); ensure the custom id field
+    const result = yield model_student_1.Student.findById(id) // ensure the mongoDB id field
         .populate('user')
         .populate('admissionSemester')
         .populate({

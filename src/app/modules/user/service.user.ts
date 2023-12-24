@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import config from '../../config';
 import mongoose from 'mongoose';
 import httpStatus from 'http-status';
@@ -17,11 +18,16 @@ import { TFaculty } from '../faculty/interface.faculty';
 import { Faculty } from '../faculty/model.faculty';
 import { TAdmin } from '../admin/interface.admin';
 import { Admin } from '../admin/model.admin';
+import { sendEmailToCloudinary } from '../../utils/sendEmailToCloudinary';
 
 // create user as a student
-const createStudent = async (password: string, studentData: TStudent) => {
+const createStudent = async (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  file: any,
+  password: string,
+  studentData: TStudent,
+) => {
   const userData: Partial<TUser> = {};
-
   // find academic semester info
   // get academic semester id from student.admissionSemester > then the id checks the admission year, code > then send the data to generateStudentId function for year and code
 
@@ -59,6 +65,13 @@ const createStudent = async (password: string, studentData: TStudent) => {
     // set generated userId
     userData.id = await generateStudentId(admissionSemesterId);
 
+    const imageName = `${userData.id}_${studentData?.name?.firstName}`;
+    const path = file?.path;
+    // send Image to cloudinary
+    const { secure_url } = (await sendEmailToCloudinary(imageName, path)) as {
+      secure_url: string;
+    };
+
     // create new user
     const newUser = await User.create([userData], { session }); // step 3
 
@@ -71,6 +84,7 @@ const createStudent = async (password: string, studentData: TStudent) => {
     // set id , _id as user
     studentData.id = newUser[0].id;
     studentData.user = newUser[0]._id; //reference _id
+    studentData.profileImg = secure_url;
 
     // create a student -> transaction 2
     const newStudent = await Student.create([studentData], { session });
@@ -98,7 +112,11 @@ const createStudent = async (password: string, studentData: TStudent) => {
 };
 
 // create user as a faculty
-const createFaculty = async (password: string, facultyData: TFaculty) => {
+const createFaculty = async (
+  file: any,
+  password: string,
+  facultyData: TFaculty,
+) => {
   // create a user object
   const userData: Partial<TUser> = {};
 
@@ -113,6 +131,13 @@ const createFaculty = async (password: string, facultyData: TFaculty) => {
   const academicDepartment = await AcademicDepartment.findById(
     facultyData.academicDepartment,
   );
+
+  const imageName = `${userData.id}_${facultyData?.name?.firstName}`;
+  const path = file?.path;
+  // send Image to cloudinary
+  const { secure_url } = (await sendEmailToCloudinary(imageName, path)) as {
+    secure_url: string;
+  };
 
   if (!academicDepartment) {
     throw new AppError(400, 'Academic department not found');
@@ -138,6 +163,7 @@ const createFaculty = async (password: string, facultyData: TFaculty) => {
     // set faculty id , _id as user
     facultyData.id = newUser[0].id;
     facultyData.user = newUser[0]._id; //reference _id
+    facultyData.profileImg = secure_url;
 
     // create a faculty -> transaction 2
     const newFaculty = await Faculty.create([facultyData], { session });
@@ -166,7 +192,7 @@ const createFaculty = async (password: string, facultyData: TFaculty) => {
 };
 
 // create user as a admin
-const createAdmin = async (password: string, adminData: TAdmin) => {
+const createAdmin = async (file: any, password: string, adminData: TAdmin) => {
   // create a user object
   const userData: Partial<TUser> = {};
 
@@ -176,6 +202,13 @@ const createAdmin = async (password: string, adminData: TAdmin) => {
   //set student role
   userData.role = 'admin';
   userData.email = adminData.email;
+
+  const imageName = `${userData.id}_${adminData?.name?.firstName}`;
+  const path = file?.path;
+  // send Image to cloudinary
+  const { secure_url } = (await sendEmailToCloudinary(imageName, path)) as {
+    secure_url: string;
+  };
 
   // Transaction
   const session = await mongoose.startSession(); // step 1
@@ -197,6 +230,7 @@ const createAdmin = async (password: string, adminData: TAdmin) => {
     // set faculty id , _id as user
     adminData.id = newUser[0].id;
     adminData.user = newUser[0]._id; //reference _id
+    adminData.profileImg = secure_url;
 
     // create a faculty -> transaction 2
     const newAdmin = await Admin.create([adminData], { session });

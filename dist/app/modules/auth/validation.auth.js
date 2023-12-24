@@ -24,8 +24,29 @@ const refreshTokenValidationSchema = zod_1.z.object({
         }),
     }),
 });
+// forget-password
+const forgetPasswordValidationSchema = zod_1.z.object({
+    body: zod_1.z.object({
+        id: zod_1.z.string({
+            required_error: 'User id is required!',
+        }),
+    }),
+});
+// reset password
+const resetPasswordValidationSchema = zod_1.z.object({
+    body: zod_1.z.object({
+        id: zod_1.z.string({
+            required_error: 'User id is required!',
+        }),
+        newPassword: zod_1.z.string({
+            required_error: 'User password is required!',
+        }),
+    }),
+});
 exports.authValidation = {
     loginValidationSchema,
     changePasswordValidationSchema,
     refreshTokenValidationSchema,
+    forgetPasswordValidationSchema,
+    resetPasswordValidationSchema,
 };

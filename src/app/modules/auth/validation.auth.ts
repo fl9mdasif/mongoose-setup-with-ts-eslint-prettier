@@ -25,6 +25,7 @@ const refreshTokenValidationSchema = z.object({
   }),
 });
 
+// forget-password
 const forgetPasswordValidationSchema = z.object({
   body: z.object({
     id: z.string({
@@ -33,6 +34,7 @@ const forgetPasswordValidationSchema = z.object({
   }),
 });
 
+// reset password
 const resetPasswordValidationSchema = z.object({
   body: z.object({
     id: z.string({

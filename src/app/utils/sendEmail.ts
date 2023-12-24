@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import config from '../config';
+
 export const sendMail = async (to: string, html: string) => {
   //
   // SMTP -> Send mail transfer protocol
@@ -18,8 +19,8 @@ export const sendMail = async (to: string, html: string) => {
   await transporter.sendMail({
     from: 'asifalazadami2016@gmail.com', // sender address
     to, // list of receivers
-    subject: 'reset your password within 10min', // Subject line
-    text: '', // plain text body
+    subject: 'Reset your password within 10min', // Subject line
+    text: 'You could change your password through the link', // plain text body
     html, // html body
   });
   // console.log('Message sent: %s', info.messageId);

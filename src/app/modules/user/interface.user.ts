@@ -3,6 +3,7 @@ import { USER_ROLE } from './constant.user';
 
 export interface TUser {
   id: string;
+  email: string;
   password: string;
   needsPasswordChange: boolean;
   passwordChangedAt?: Date;

@@ -25,6 +25,7 @@ router.post(
 
 router.post(
   '/refresh-token',
+  // auth('admin'),
   validateRequest(authValidation.refreshTokenValidationSchema),
   AuthControllers.refreshToken,
 );

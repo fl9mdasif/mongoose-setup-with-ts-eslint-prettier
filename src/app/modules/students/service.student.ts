@@ -33,8 +33,8 @@ const getAllStudents = async (query: Record<string, unknown>) => {
 
 // single user
 const getSingleStudent = async (id: string) => {
-  //  const result = await Student.findOne({ id });
-  const result = await Student.findById(id)
+  //  const result = await Student.findOne({ id }); ensure the custom id field
+  const result = await Student.findById(id) // ensure the mongoDB id field
     .populate('user')
     .populate('admissionSemester')
     .populate({

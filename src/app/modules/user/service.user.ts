@@ -18,7 +18,7 @@ import { TFaculty } from '../faculty/interface.faculty';
 import { Faculty } from '../faculty/model.faculty';
 import { TAdmin } from '../admin/interface.admin';
 import { Admin } from '../admin/model.admin';
-import { sendEmailToCloudinary } from '../../utils/sendEmailToCloudinary';
+import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
 
 // create user as a student
 const createStudent = async (
@@ -67,8 +67,9 @@ const createStudent = async (
 
     const imageName = `${userData.id}_${studentData?.name?.firstName}`;
     const path = file?.path;
+
     // send Image to cloudinary
-    const { secure_url } = (await sendEmailToCloudinary(imageName, path)) as {
+    const { secure_url } = (await sendImageToCloudinary(imageName, path)) as {
       secure_url: string;
     };
 
@@ -135,7 +136,7 @@ const createFaculty = async (
   const imageName = `${userData.id}_${facultyData?.name?.firstName}`;
   const path = file?.path;
   // send Image to cloudinary
-  const { secure_url } = (await sendEmailToCloudinary(imageName, path)) as {
+  const { secure_url } = (await sendImageToCloudinary(imageName, path)) as {
     secure_url: string;
   };
 
@@ -206,7 +207,7 @@ const createAdmin = async (file: any, password: string, adminData: TAdmin) => {
   const imageName = `${userData.id}_${adminData?.name?.firstName}`;
   const path = file?.path;
   // send Image to cloudinary
-  const { secure_url } = (await sendEmailToCloudinary(imageName, path)) as {
+  const { secure_url } = (await sendImageToCloudinary(imageName, path)) as {
     secure_url: string;
   };
 

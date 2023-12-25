@@ -8,7 +8,7 @@ import { createAdminValidationSchema } from '../admin/validation.admin';
 import auth from '../../middlewares/auth';
 import { USER_ROLE } from './constant.user';
 import { UserValidation } from './validation.user';
-import { upload } from '../../utils/sendEmailToCloudinary';
+import { upload } from '../../utils/sendImageToCloudinary';
 
 const router = express.Router();
 
@@ -38,7 +38,7 @@ router.post(
 
 router.post(
   '/create-admin',
-  auth('admin'),
+  // auth('admin'),
   upload.single('file'),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data);

@@ -13,17 +13,19 @@ const validation_admin_1 = require("../admin/validation.admin");
 const auth_1 = __importDefault(require("../../middlewares/auth"));
 const constant_user_1 = require("./constant.user");
 const validation_user_1 = require("./validation.user");
-const sendEmailToCloudinary_1 = require("../../utils/sendEmailToCloudinary");
+const sendImageToCloudinary_1 = require("../../utils/sendImageToCloudinary");
 const router = express_1.default.Router();
-router.post('/create-student', (0, auth_1.default)('admin', constant_user_1.USER_ROLE.faculty), sendEmailToCloudinary_1.upload.single('file'), (req, res, next) => {
+router.post('/create-student', (0, auth_1.default)('admin', constant_user_1.USER_ROLE.faculty), sendImageToCloudinary_1.upload.single('file'), (req, res, next) => {
     req.body = JSON.parse(req.body.data);
     next();
 }, (0, validateRequest_1.default)(validation_student_1.studentValidations.createStudentValidationSchema), controller_user_1.userControllers.createStudent);
-router.post('/create-faculty', (0, auth_1.default)('admin'), sendEmailToCloudinary_1.upload.single('file'), (req, res, next) => {
+router.post('/create-faculty', (0, auth_1.default)('admin'), sendImageToCloudinary_1.upload.single('file'), (req, res, next) => {
     req.body = JSON.parse(req.body.data);
     next();
 }, (0, validateRequest_1.default)(validation_faculty_1.createFacultyValidationSchema), controller_user_1.userControllers.createFaculty);
-router.post('/create-admin', (0, auth_1.default)('admin'), sendEmailToCloudinary_1.upload.single('file'), (req, res, next) => {
+router.post('/create-admin', 
+// auth('admin'),
+sendImageToCloudinary_1.upload.single('file'), (req, res, next) => {
     req.body = JSON.parse(req.body.data);
     next();
 }, (0, validateRequest_1.default)(validation_admin_1.createAdminValidationSchema), controller_user_1.userControllers.createAdmin);

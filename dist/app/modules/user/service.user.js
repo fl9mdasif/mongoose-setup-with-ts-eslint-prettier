@@ -25,7 +25,7 @@ const model_student_1 = require("../students/model.student");
 const model_user_1 = require("./model.user");
 const model_faculty_1 = require("../faculty/model.faculty");
 const model_admin_1 = require("../admin/model.admin");
-const sendEmailToCloudinary_1 = require("../../utils/sendEmailToCloudinary");
+const sendImageToCloudinary_1 = require("../../utils/sendImageToCloudinary");
 // create user as a student
 const createStudent = (
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -59,7 +59,7 @@ file, password, studentData) => __awaiter(void 0, void 0, void 0, function* () {
         const imageName = `${userData.id}_${(_a = studentData === null || studentData === void 0 ? void 0 : studentData.name) === null || _a === void 0 ? void 0 : _a.firstName}`;
         const path = file === null || file === void 0 ? void 0 : file.path;
         // send Image to cloudinary
-        const { secure_url } = (yield (0, sendEmailToCloudinary_1.sendEmailToCloudinary)(imageName, path));
+        const { secure_url } = (yield (0, sendImageToCloudinary_1.sendImageToCloudinary)(imageName, path));
         // create new user
         const newUser = yield model_user_1.User.create([userData], { session }); // step 3
         //create a student ->  transaction 2
@@ -106,7 +106,7 @@ const createFaculty = (file, password, facultyData) => __awaiter(void 0, void 0,
     const imageName = `${userData.id}_${(_b = facultyData === null || facultyData === void 0 ? void 0 : facultyData.name) === null || _b === void 0 ? void 0 : _b.firstName}`;
     const path = file === null || file === void 0 ? void 0 : file.path;
     // send Image to cloudinary
-    const { secure_url } = (yield (0, sendEmailToCloudinary_1.sendEmailToCloudinary)(imageName, path));
+    const { secure_url } = (yield (0, sendImageToCloudinary_1.sendImageToCloudinary)(imageName, path));
     if (!academicDepartment) {
         throw new AppErrors_1.default(400, 'Academic department not found');
     }
@@ -160,7 +160,7 @@ const createAdmin = (file, password, adminData) => __awaiter(void 0, void 0, voi
     const imageName = `${userData.id}_${(_c = adminData === null || adminData === void 0 ? void 0 : adminData.name) === null || _c === void 0 ? void 0 : _c.firstName}`;
     const path = file === null || file === void 0 ? void 0 : file.path;
     // send Image to cloudinary
-    const { secure_url } = (yield (0, sendEmailToCloudinary_1.sendEmailToCloudinary)(imageName, path));
+    const { secure_url } = (yield (0, sendImageToCloudinary_1.sendImageToCloudinary)(imageName, path));
     // Transaction
     const session = yield mongoose_1.default.startSession(); // step 1
     try {

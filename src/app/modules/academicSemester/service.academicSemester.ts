@@ -1,3 +1,5 @@
+import httpStatus from 'http-status';
+import AppError from '../../errors/AppErrors';
 import { academicSemesterNameCodeMapper } from './constant.academicSemester';
 import { TAcademicSemester } from './interface.academicSemester';
 import { AcademicSemester } from './model.academicSemester';
@@ -6,10 +8,15 @@ const createAcademicSemesterIntoDB = async (payload: TAcademicSemester) => {
   // semester name --> semester code
   // academicSemesterNameCodeMapper['Fall']
   if (academicSemesterNameCodeMapper[payload.name] !== payload.code) {
-    throw new Error('Invalid Semester Code');
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Invalid Semester Code',
+      'semesterCode',
+    );
   }
 
   const result = await AcademicSemester.create(payload);
+
   return result;
 };
 

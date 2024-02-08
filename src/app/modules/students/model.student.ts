@@ -149,14 +149,20 @@ const studentSchema = new Schema<TStudent, StudentModel>(
     },
     admissionSemester: {
       type: Schema.Types.ObjectId,
-      required: [true, 'academic_id is required'],
+      required: [true, 'academic_sem_id is required'],
       ref: 'AcademicSemester',
     },
-    profileImg: { type: String },
+    academicFaculty: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'academic_faculty is required'],
+      ref: 'AcademicFaculty',
+    },
     academicDepartment: {
       type: Schema.Types.ObjectId,
+      required: [true, 'academic_dept is required'],
       ref: 'AcademicDepartment',
     },
+    profileImg: { type: String, default: '' },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -210,16 +216,6 @@ studentSchema.statics.isUserExists = async function (id: string) {
   const existingUser = await Student.findOne({ id });
   return existingUser;
 };
-
-// studentSchema.pre('findOneAndUpdate', async function (next) {
-//   const isStudentExists = await Student.findOne({ id: this.id });
-//   const isUserExists = await User.findOne({ id: this.id });
-
-//   if (!isStudentExists && isUserExists) {
-//     throw new AppError(httpStatus.NOT_FOUND, 'Students does not exists !');
-//   }
-//   next();
-// });
 
 export const Student = model<TStudent, StudentModel>('Student', studentSchema);
 

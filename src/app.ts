@@ -10,8 +10,13 @@ const app: Application = express();
 
 // parser middleware
 app.use(express.json());
-app.use(cors());
 app.use(cookieParser());
+
+const corsOptions = {
+  origin: 'http://localhost:5173',
+  credentials: true,
+};
+app.use(cors(corsOptions));
 
 // application routes
 app.use('/api/v1', router);

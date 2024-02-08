@@ -10,7 +10,10 @@ const userSchema = new Schema<TUser, UserModel>(
     email: { type: String, required: true, unique: true },
     needsPasswordChange: { type: Boolean, default: true },
     passwordChangedAt: { type: Date },
-    role: { type: String, enum: ['student', 'admin', 'faculty'] },
+    role: {
+      type: String,
+      enum: ['superAdmin', 'student', 'admin', 'faculty'],
+    },
     status: {
       type: String,
       enum: ['in-progress', 'blocked'],

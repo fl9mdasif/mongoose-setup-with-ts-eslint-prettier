@@ -27,13 +27,17 @@ const getAllStudents = async (query: Record<string, unknown>) => {
     .paginate()
     .fields();
 
+  const meta = await studentQuery.countTotal();
   const result = await studentQuery.modelQuery;
-  return result;
+
+  return {
+    meta,
+    result,
+  };
 };
 
 // single user
 const getSingleStudent = async (id: string) => {
-  //  const result = await Student.findOne({ id }); ensure the custom id field
   const result = await Student.findById(id) // ensure the mongoDB id field
     .populate('user')
     .populate('admissionSemester')

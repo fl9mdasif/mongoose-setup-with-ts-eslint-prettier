@@ -33,6 +33,12 @@ router.post(
 // forget-password
 router.post(
   '/forget-password',
+  auth(
+    USER_ROLE.superAdmin,
+    USER_ROLE.admin,
+    USER_ROLE.faculty,
+    USER_ROLE.student,
+  ),
   validateRequest(authValidation.forgetPasswordValidationSchema),
   AuthControllers.forgetPassword,
 );

@@ -137,6 +137,11 @@ const createFaculty = async (
     facultyData.academicDepartment,
   );
 
+  if (!academicDepartment) {
+    throw new Error('academic department Id not found ');
+  }
+  facultyData.academicFaculty = academicDepartment?.academicFaculty;
+
   if (file) {
     const imageName = `${userData.id}_${facultyData?.name?.firstName}`;
     const path = file?.path;

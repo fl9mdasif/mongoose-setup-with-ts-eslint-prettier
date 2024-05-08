@@ -9,12 +9,7 @@ const router = express.Router();
 
 router.post(
   '/create-academic-department',
-  auth(
-    USER_ROLE.admin,
-    USER_ROLE.superAdmin,
-    USER_ROLE.faculty,
-    USER_ROLE.student,
-  ),
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin, USER_ROLE.faculty),
   validateRequest(
     AcademicDepartmentValidation.createAcademicDepartmentValidationSchema,
   ),
@@ -34,12 +29,7 @@ router.get(
 
 router.patch(
   '/:departmentId',
-  auth(
-    USER_ROLE.admin,
-    USER_ROLE.superAdmin,
-    USER_ROLE.faculty,
-    USER_ROLE.student,
-  ),
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin, USER_ROLE.faculty),
   validateRequest(
     AcademicDepartmentValidation.updateAcademicDepartmentValidationSchema,
   ),

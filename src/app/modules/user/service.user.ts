@@ -68,7 +68,7 @@ const createStudent = async (
     userData.id = await generateStudentId(admissionSemesterId);
 
     if (file) {
-      const imageName = `${userData.id}_${studentData?.name?.firstName}`;
+      const imageName = `${userData.id}`;
       const path = file?.path;
 
       // send Image to cloudinary
@@ -149,7 +149,7 @@ const createFaculty = async (
     const { secure_url } = (await sendImageToCloudinary(imageName, path)) as {
       secure_url: string;
     };
-    facultyData.profileImg = secure_url;
+    facultyData.profileImg = secure_url as string;
   }
   if (!academicDepartment) {
     throw new AppError(400, 'Academic department not found');

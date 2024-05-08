@@ -181,6 +181,7 @@ const getMyEnrolledCoursesFromDB = async (
   const result = await enrolledCourseQuery.modelQuery;
   const meta = await enrolledCourseQuery.countTotal();
 
+  console.log(meta);
   return {
     meta,
     result,

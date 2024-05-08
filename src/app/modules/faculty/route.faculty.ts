@@ -16,7 +16,7 @@ router.get(
 
 router.patch(
   '/:id',
-  auth(USER_ROLE.superAdmin, USER_ROLE.admin, USER_ROLE.faculty),
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
 
   validateRequest(updateFacultyValidationSchema),
   FacultyControllers.updateFaculty,

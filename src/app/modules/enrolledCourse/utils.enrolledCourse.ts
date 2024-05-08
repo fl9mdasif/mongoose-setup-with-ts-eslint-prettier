@@ -33,7 +33,7 @@ export const calculateGradeAndPoints = (totalMarks: number) => {
     };
   } else if (totalMarks >= 80 && totalMarks <= 100) {
     result = {
-      grade: 'A',
+      grade: 'A+',
       gradePoints: 4.0,
     };
   } else {
@@ -42,6 +42,6 @@ export const calculateGradeAndPoints = (totalMarks: number) => {
       gradePoints: 0,
     };
   }
-
+  // console.log(result);
   return result;
 };

@@ -7,6 +7,18 @@ import { USER_ROLE } from '../user/constant.user';
 
 const router = express.Router();
 
+router.get(
+  '/',
+  auth(USER_ROLE.faculty, USER_ROLE.student),
+  enrolledCourseController.getAllEnrolledCourses,
+);
+
+router.get(
+  '/my-enrolled-courses',
+  auth(USER_ROLE.student),
+  enrolledCourseController.getMyEnrolledCourses,
+);
+
 router.post(
   '/create-enrolled-course',
   auth(USER_ROLE.student),
@@ -23,12 +35,6 @@ router.patch(
     EnrolledCourseValidations.updateEnrolledCourseMarksValidationZodSchema,
   ),
   enrolledCourseController.updateEnrolledCourseMarks,
-);
-
-router.get(
-  '/my-enrolled-courses',
-  auth(USER_ROLE.student),
-  enrolledCourseController.getMyEnrolledCourses,
 );
 
 export const EnrolledCourseRoutes = router;
